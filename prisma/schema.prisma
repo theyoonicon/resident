@@ -1,0 +1,380 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ============ Auth ============
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  username      String?   @unique
+  email         String    @unique
+  emailVerified DateTime?
+  password      String?
+  image         String?
+  role          Role      @default(PENDING)
+  department    String?
+  year          String?
+
+  // 전공의 인증
+  verificationImage  String?
+  verificationStatus VerificationStatus @default(PENDING)
+  verificationNote   String?
+  verifiedAt         DateTime?
+  verifiedBy         String?
+
+  accounts      Account[]
+  sessions      Session[]
+  files         File[]
+  folders       Folder[]
+  cases         Case[]
+  caseFolders   CaseFolder[]
+  caseTemplates CaseTemplate[]
+  settings      UserSettings?
+  starred       StarredItem[]
+  sharedWith    SharedAccess[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+enum Role {
+  PENDING
+  USER
+  ADMIN
+}
+
+enum VerificationStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+// ============ 파일 시스템 ============
+
+model Folder {
+  id       String   @id @default(cuid())
+  name     String
+  color    String?  @default("#6366f1")
+  parentId String?
+  parent   Folder?  @relation("FolderTree", fields: [parentId], references: [id])
+  children Folder[] @relation("FolderTree")
+  isShared Boolean  @default(true)
+
+  // 소프트 삭제
+  deletedAt DateTime?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  files      File[]
+  starred    StarredItem[]
+  sharedWith SharedAccess[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([parentId])
+  @@index([isShared])
+  @@index([deletedAt])
+}
+
+model File {
+  id           String  @id @default(cuid())
+  name         String
+  originalName String
+  mimeType     String
+  size         Int
+  path         String
+  isShared     Boolean @default(true)
+
+  // 소프트 삭제
+  deletedAt DateTime?
+
+  folderId String?
+  folder   Folder? @relation(fields: [folderId], references: [id], onDelete: SetNull)
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  tags       FileTag[]
+  starred    StarredItem[]
+  sharedWith SharedAccess[]
+  versions   FileVersion[]
+
+  viewCount     Int @default(0)
+  downloadCount Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([folderId])
+  @@index([isShared])
+  @@index([deletedAt])
+}
+
+model FileVersion {
+  id      String @id @default(cuid())
+  fileId  String
+  file    File   @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  version Int
+  path    String
+  size    Int
+
+  createdAt DateTime @default(now())
+}
+
+model Tag {
+  id    String    @id @default(cuid())
+  name  String    @unique
+  color String?
+  files FileTag[]
+}
+
+model FileTag {
+  fileId String
+  tagId  String
+  file   File   @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  tag    Tag    @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([fileId, tagId])
+}
+
+model StarredItem {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  fileId   String?
+  file     File?   @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  folderId String?
+  folder   Folder? @relation(fields: [folderId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([userId, fileId])
+  @@unique([userId, folderId])
+}
+
+model SharedAccess {
+  id String @id @default(cuid())
+
+  fileId   String?
+  file     File?   @relation(fields: [fileId], references: [id], onDelete: Cascade)
+  folderId String?
+  folder   Folder? @relation(fields: [folderId], references: [id], onDelete: Cascade)
+
+  sharedWithId String
+  sharedWith   User   @relation(fields: [sharedWithId], references: [id], onDelete: Cascade)
+
+  permission Permission @default(VIEW)
+
+  createdAt DateTime @default(now())
+
+  @@unique([fileId, sharedWithId])
+  @@unique([folderId, sharedWithId])
+}
+
+enum Permission {
+  VIEW
+  EDIT
+  ADMIN
+}
+
+// ============ Case Review ============
+
+model Case {
+  id         String    @id @default(cuid())
+  title      String
+  department String
+  caseType   String?
+  date       DateTime?
+
+  // 환자 기본 정보
+  ageGroup String?
+  gender   String?
+
+  // 기본 필드
+  chiefComplaint String? @db.Text
+  history        String? @db.Text
+  examination    String? @db.Text
+  diagnosis      String? @db.Text
+  treatment      String? @db.Text
+  outcome        String? @db.Text
+
+  summary        String? @db.Text
+  learningPoints String? @db.Text
+  references     String? @db.Text
+  personalNotes  String? @db.Text
+
+  // AI / 원본 차트
+  rawContent String? @db.Text
+  aiSummary  String? @db.Text
+
+  // 과별 템플릿 데이터
+  departmentData  Json?
+  templateVersion String?
+
+  // 공개 공유
+  isFavorite Boolean @default(false)
+  isArchived Boolean @default(false)
+  isPublic   Boolean @default(false)
+  publicId   String? @unique
+
+  // 소프트 삭제
+  deletedAt DateTime?
+
+  // 관계
+  userId       String
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  caseFolderId String?
+  caseFolder   CaseFolder? @relation(fields: [caseFolderId], references: [id])
+
+  images CaseImage[]
+  tags   CaseTagRelation[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([department])
+  @@index([caseFolderId])
+  @@index([deletedAt])
+  @@index([publicId])
+}
+
+model CaseImage {
+  id      String  @id @default(cuid())
+  caseId  String
+  case    Case    @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  url     String
+  caption String?
+  order   Int     @default(0)
+
+  createdAt DateTime @default(now())
+
+  @@index([caseId])
+}
+
+// ============ 케이스 폴더 ============
+
+model CaseFolder {
+  id        String    @id @default(cuid())
+  name      String
+  color     String?
+  order     Int       @default(0)
+  deletedAt DateTime?
+
+  userId   String
+  user     User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parentId String?
+  parent   CaseFolder?  @relation("CaseFolderTree", fields: [parentId], references: [id])
+  children CaseFolder[] @relation("CaseFolderTree")
+
+  cases Case[]
+
+  createdAt DateTime @default(now())
+
+  @@index([userId])
+  @@index([parentId])
+  @@index([deletedAt])
+}
+
+// ============ 케이스 태그 ============
+
+model CaseTag {
+  id    String  @id @default(cuid())
+  name  String  @unique
+  color String?
+
+  cases CaseTagRelation[]
+}
+
+model CaseTagRelation {
+  caseId String
+  tagId  String
+  case   Case    @relation(fields: [caseId], references: [id], onDelete: Cascade)
+  tag    CaseTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([caseId, tagId])
+}
+
+// ============ 사용자 정의 템플릿 ============
+
+model CaseTemplate {
+  id     String @id @default(cuid())
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  key      String
+  name     String
+  sections Json
+  fields   Json
+  aiPrompt String? @db.Text
+
+  isActive Boolean @default(true)
+  order    Int     @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, key])
+  @@index([userId])
+}
+
+// ============ 사용자 설정 ============
+
+model UserSettings {
+  id     String @id @default(cuid())
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  enabledTemplates  Json    @default("[\"internal-medicine\", \"surgery\", \"emergency\", \"radiology\", \"pathology\"]")
+  hasSeenOnboarding Boolean @default(false)
+  hasSampleCase     Boolean @default(false)
+  storageLimit      BigInt  @default(3221225472) // 3GB in bytes
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

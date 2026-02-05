@@ -1,0 +1,412 @@
+import { DepartmentTemplate } from '../types';
+
+export const emergencyTemplate: DepartmentTemplate = {
+  departmentKey: 'emergency',
+  departmentName: '응급의학과',
+  departmentNameEn: 'Emergency Medicine',
+  version: '1.0.0',
+
+  sections: [
+    { key: 'triage', title: '중증도 분류', titleEn: 'Triage', order: 1 },
+    { key: 'presentation', title: '내원 정보', titleEn: 'Presentation', order: 2 },
+    { key: 'assessment', title: '응급 평가', titleEn: 'Emergency Assessment', order: 3 },
+    { key: 'management', title: '처치', titleEn: 'Management', order: 4 },
+    { key: 'disposition', title: '처리', titleEn: 'Disposition', order: 5 },
+  ],
+
+  fields: [
+    // Triage
+    {
+      key: 'ktas',
+      label: 'KTAS 등급',
+      labelEn: 'KTAS Level',
+      type: 'select',
+      required: true,
+      section: 'triage',
+      order: 1,
+      options: [
+        { value: '1', label: 'KTAS 1 - 소생 (즉시)', labelEn: 'KTAS 1 - Resuscitation (Immediate)' },
+        { value: '2', label: 'KTAS 2 - 긴급 (10분 이내)', labelEn: 'KTAS 2 - Emergent (10 min)' },
+        { value: '3', label: 'KTAS 3 - 응급 (30분 이내)', labelEn: 'KTAS 3 - Urgent (30 min)' },
+        { value: '4', label: 'KTAS 4 - 준응급 (60분 이내)', labelEn: 'KTAS 4 - Less Urgent (60 min)' },
+        { value: '5', label: 'KTAS 5 - 비응급 (120분 이내)', labelEn: 'KTAS 5 - Non-Urgent (120 min)' },
+      ],
+    },
+    {
+      key: 'triageTime',
+      label: '중증도 분류 시간',
+      labelEn: 'Triage Time',
+      type: 'text',
+      required: false,
+      section: 'triage',
+      order: 2,
+      placeholder: 'HH:MM',
+      placeholderEn: 'HH:MM',
+    },
+    // Presentation
+    {
+      key: 'arrivalDate',
+      label: '내원일시',
+      labelEn: 'Arrival Date/Time',
+      type: 'text',
+      required: true,
+      section: 'presentation',
+      order: 1,
+      placeholder: 'YYYY-MM-DD HH:MM',
+      placeholderEn: 'YYYY-MM-DD HH:MM',
+    },
+    {
+      key: 'arrivalMode',
+      label: '내원 방법',
+      labelEn: 'Arrival Mode',
+      type: 'select',
+      required: false,
+      section: 'presentation',
+      order: 2,
+      options: [
+        { value: 'walk-in', label: '도보', labelEn: 'Walk-in' },
+        { value: '119', label: '119 구급대', labelEn: 'EMS (119)' },
+        { value: 'private', label: '자가용/택시', labelEn: 'Private Vehicle/Taxi' },
+        { value: 'transfer', label: '타병원 전원', labelEn: 'Transfer from Hospital' },
+        { value: 'police', label: '경찰 이송', labelEn: 'Police Transport' },
+        { value: 'other', label: '기타', labelEn: 'Other' },
+      ],
+    },
+    {
+      key: 'chiefComplaint',
+      label: '주소 (C.C)',
+      labelEn: 'Chief Complaint',
+      type: 'text',
+      required: true,
+      section: 'presentation',
+      order: 3,
+      placeholder: '예: 흉통, 호흡곤란',
+      placeholderEn: 'e.g., Chest pain, dyspnea',
+    },
+    {
+      key: 'onsetTime',
+      label: '증상 발생 시간',
+      labelEn: 'Symptom Onset',
+      type: 'text',
+      required: false,
+      section: 'presentation',
+      order: 4,
+      placeholder: '내원 몇 시간 전, 또는 구체적 시간',
+      placeholderEn: 'Hours before arrival, or specific time',
+    },
+    {
+      key: 'mechanism',
+      label: '손상 기전 (외상 시)',
+      labelEn: 'Mechanism of Injury',
+      type: 'textarea',
+      required: false,
+      section: 'presentation',
+      order: 5,
+      placeholder: '교통사고, 추락, 폭행 등',
+      placeholderEn: 'Motor vehicle accident, fall, assault, etc.',
+    },
+
+    // Emergency Assessment
+    {
+      key: 'mentalStatus',
+      label: '의식 상태',
+      labelEn: 'Mental Status',
+      type: 'select',
+      required: false,
+      section: 'assessment',
+      order: 1,
+      options: [
+        { value: 'alert', label: 'Alert (명료)', labelEn: 'Alert' },
+        { value: 'verbal', label: 'Verbal (언어 반응)', labelEn: 'Verbal Response' },
+        { value: 'pain', label: 'Pain (통증 반응)', labelEn: 'Pain Response' },
+        { value: 'unresponsive', label: 'Unresponsive (무반응)', labelEn: 'Unresponsive' },
+      ],
+    },
+    {
+      key: 'gcs',
+      label: 'GCS',
+      labelEn: 'Glasgow Coma Scale',
+      type: 'text',
+      required: false,
+      section: 'assessment',
+      order: 2,
+      placeholder: 'E4V5M6 = 15',
+      placeholderEn: 'E4V5M6 = 15',
+    },
+    {
+      key: 'bloodPressure',
+      label: '혈압 (BP)',
+      labelEn: 'Blood Pressure',
+      type: 'text',
+      required: false,
+      section: 'assessment',
+      order: 3,
+      placeholder: '120/80 mmHg',
+      placeholderEn: '120/80 mmHg',
+    },
+    {
+      key: 'heartRate',
+      label: '맥박 (HR)',
+      labelEn: 'Heart Rate',
+      type: 'text',
+      required: false,
+      section: 'assessment',
+      order: 4,
+      placeholder: '72 bpm',
+      placeholderEn: '72 bpm',
+    },
+    {
+      key: 'respiratoryRate',
+      label: '호흡수 (RR)',
+      labelEn: 'Respiratory Rate',
+      type: 'text',
+      required: false,
+      section: 'assessment',
+      order: 5,
+      placeholder: '16 /min',
+      placeholderEn: '16 /min',
+    },
+    {
+      key: 'temperature',
+      label: '체온 (BT)',
+      labelEn: 'Body Temperature',
+      type: 'text',
+      required: false,
+      section: 'assessment',
+      order: 6,
+      placeholder: '36.5 °C',
+      placeholderEn: '36.5 °C',
+    },
+    {
+      key: 'oxygenSaturation',
+      label: 'SpO2',
+      labelEn: 'Oxygen Saturation',
+      type: 'text',
+      required: false,
+      section: 'assessment',
+      order: 7,
+      placeholder: '98%',
+      placeholderEn: '98%',
+    },
+    {
+      key: 'physicalExam',
+      label: '신체 검사',
+      labelEn: 'Physical Examination',
+      type: 'textarea',
+      required: false,
+      section: 'assessment',
+      order: 8,
+    },
+    {
+      key: 'labResults',
+      label: '응급 검사 결과',
+      labelEn: 'Emergency Lab Results',
+      type: 'textarea',
+      required: false,
+      section: 'assessment',
+      order: 9,
+      placeholder: 'CBC, Chemistry, Cardiac enzyme, ABG 등',
+      placeholderEn: 'CBC, Chemistry, Cardiac enzymes, ABG, etc.',
+    },
+    {
+      key: 'imagingResults',
+      label: '영상 검사',
+      labelEn: 'Imaging Results',
+      type: 'textarea',
+      required: false,
+      section: 'assessment',
+      order: 10,
+      placeholder: 'CXR, CT, FAST 등',
+      placeholderEn: 'CXR, CT, FAST, etc.',
+    },
+    {
+      key: 'ekgFindings',
+      label: 'EKG 소견',
+      labelEn: 'EKG Findings',
+      type: 'textarea',
+      required: false,
+      section: 'assessment',
+      order: 11,
+    },
+    {
+      key: 'emergencyDiagnosis',
+      label: '응급 진단',
+      labelEn: 'Emergency Diagnosis',
+      type: 'textarea',
+      required: true,
+      section: 'assessment',
+      order: 12,
+    },
+
+    // Management
+    {
+      key: 'resuscitation',
+      label: '소생술',
+      labelEn: 'Resuscitation',
+      type: 'textarea',
+      required: false,
+      section: 'management',
+      order: 1,
+      placeholder: 'CPR, Intubation, Defibrillation 등',
+      placeholderEn: 'CPR, Intubation, Defibrillation, etc.',
+    },
+    {
+      key: 'ivAccess',
+      label: 'IV 확보',
+      labelEn: 'IV Access',
+      type: 'text',
+      required: false,
+      section: 'management',
+      order: 2,
+      placeholder: '예: 20G x 2 @ both AC',
+      placeholderEn: 'e.g., 20G x 2 @ both AC',
+    },
+    {
+      key: 'fluidGiven',
+      label: '수액 투여',
+      labelEn: 'Fluid Given',
+      type: 'text',
+      required: false,
+      section: 'management',
+      order: 3,
+      placeholder: 'NS 1L, LR 등',
+      placeholderEn: 'NS 1L, LR, etc.',
+    },
+    {
+      key: 'medicationsGiven',
+      label: '투여 약물',
+      labelEn: 'Medications Given',
+      type: 'textarea',
+      required: false,
+      section: 'management',
+      order: 4,
+      placeholder: '응급실에서 투여한 약물',
+      placeholderEn: 'Medications given in the ER',
+    },
+    {
+      key: 'procedures',
+      label: '응급 시술',
+      labelEn: 'Procedures',
+      type: 'textarea',
+      required: false,
+      section: 'management',
+      order: 5,
+      placeholder: '봉합, 배액, 도뇨관 등',
+      placeholderEn: 'Suturing, drainage, Foley catheter, etc.',
+    },
+    {
+      key: 'consultations',
+      label: '협진',
+      labelEn: 'Consultations',
+      type: 'textarea',
+      required: false,
+      section: 'management',
+      order: 6,
+      placeholder: '협진 의뢰한 과',
+      placeholderEn: 'Departments consulted',
+    },
+
+    // Disposition
+    {
+      key: 'disposition',
+      label: '처리',
+      labelEn: 'Disposition',
+      type: 'select',
+      required: true,
+      section: 'disposition',
+      order: 1,
+      options: [
+        { value: 'discharge', label: '귀가', labelEn: 'Discharge' },
+        { value: 'admission', label: '입원', labelEn: 'Admission' },
+        { value: 'icu', label: 'ICU 입실', labelEn: 'ICU Admission' },
+        { value: 'or', label: '응급 수술', labelEn: 'Emergency Surgery' },
+        { value: 'transfer', label: '전원', labelEn: 'Transfer' },
+        { value: 'dama', label: 'DAMA (자의퇴원)', labelEn: 'DAMA' },
+        { value: 'death', label: '사망', labelEn: 'Death' },
+        { value: 'observation', label: '응급실 관찰', labelEn: 'ER Observation' },
+      ],
+    },
+    {
+      key: 'admittingDepartment',
+      label: '입원과',
+      labelEn: 'Admitting Department',
+      type: 'text',
+      required: false,
+      section: 'disposition',
+      order: 2,
+    },
+    {
+      key: 'dischargeTime',
+      label: '퇴실 시간',
+      labelEn: 'Discharge Time',
+      type: 'text',
+      required: false,
+      section: 'disposition',
+      order: 3,
+      placeholder: 'HH:MM',
+      placeholderEn: 'HH:MM',
+    },
+    {
+      key: 'erStayDuration',
+      label: '응급실 체류 시간',
+      labelEn: 'ER Stay Duration',
+      type: 'text',
+      required: false,
+      section: 'disposition',
+      order: 4,
+      placeholder: '예: 4시간 30분',
+      placeholderEn: 'e.g., 4 hours 30 minutes',
+    },
+    {
+      key: 'dischargeMedications',
+      label: '처방약',
+      labelEn: 'Discharge Medications',
+      type: 'textarea',
+      required: false,
+      section: 'disposition',
+      order: 5,
+    },
+    {
+      key: 'followUpPlan',
+      label: '추적 계획',
+      labelEn: 'Follow-up Plan',
+      type: 'textarea',
+      required: false,
+      section: 'disposition',
+      order: 6,
+      placeholder: '외래 예약, 주의사항 등',
+      placeholderEn: 'Outpatient appointment, precautions, etc.',
+    },
+  ],
+
+  aiPrompt: `당신은 응급의학과 전문의입니다. 다음 응급실 기록을 분석하여 구조화된 JSON으로 추출해주세요.
+
+추출할 필드:
+- ktas: KTAS 등급 (1-5)
+- triageTime: 중증도 분류 시간
+- arrivalDate: 내원일시
+- arrivalMode: 내원 방법 (walk-in/119/private/transfer/police/other)
+- chiefComplaint: 주소
+- onsetTime: 증상 발생 시간
+- mechanism: 손상 기전 (외상 시)
+- mentalStatus: 의식 상태 (alert/verbal/pain/unresponsive)
+- gcs: GCS 점수
+- bloodPressure, heartRate, respiratoryRate, temperature, oxygenSaturation: 활력징후
+- physicalExam: 신체 검사
+- labResults, imagingResults, ekgFindings: 검사 결과
+- emergencyDiagnosis: 응급 진단
+- resuscitation: 소생술
+- ivAccess: IV 확보
+- fluidGiven: 수액 투여
+- medicationsGiven: 투여 약물
+- procedures: 응급 시술
+- consultations: 협진
+- disposition: 처리 (discharge/admission/icu/or/transfer/dama/death/observation)
+- admittingDepartment: 입원과
+- dischargeTime: 퇴실 시간
+- erStayDuration: 응급실 체류 시간
+- dischargeMedications: 처방약
+- followUpPlan: 추적 계획
+
+해당 정보가 없으면 null로 설정하세요. JSON만 반환하세요.`,
+};

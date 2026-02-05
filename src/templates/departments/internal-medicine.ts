@@ -1,0 +1,343 @@
+import { DepartmentTemplate } from '../types';
+
+export const internalMedicineTemplate: DepartmentTemplate = {
+  departmentKey: 'internal-medicine',
+  departmentName: '내과',
+  departmentNameEn: 'Internal Medicine',
+  version: '1.0.0',
+
+  sections: [
+    { key: 'chief-complaint', title: '주소', titleEn: 'Chief Complaint', order: 1 },
+    { key: 'history', title: '병력', titleEn: 'History', order: 2 },
+    { key: 'vitals', title: '활력징후', titleEn: 'Vital Signs', order: 3 },
+    { key: 'physical-exam', title: '신체검사', titleEn: 'Physical Examination', order: 4 },
+    { key: 'labs', title: '검사결과', titleEn: 'Laboratory', order: 5 },
+    { key: 'assessment', title: '평가 및 계획', titleEn: 'Assessment & Plan', order: 6 },
+  ],
+
+  fields: [
+    // Chief Complaint
+    {
+      key: 'chiefComplaint',
+      label: '주소 (C.C)',
+      labelEn: 'Chief Complaint',
+      type: 'text',
+      required: true,
+      section: 'chief-complaint',
+      order: 1,
+      placeholder: '예: 발열 3일',
+      placeholderEn: 'e.g., Fever for 3 days',
+    },
+    {
+      key: 'onsetDate',
+      label: '발병일',
+      labelEn: 'Onset Date',
+      type: 'date',
+      required: false,
+      section: 'chief-complaint',
+      order: 2,
+    },
+
+    // History
+    {
+      key: 'hpiNarrative',
+      label: '현병력 (HPI)',
+      labelEn: 'History of Present Illness',
+      type: 'textarea',
+      required: true,
+      section: 'history',
+      order: 1,
+      placeholder: '발병 경과 및 양상을 상세히 기술',
+      placeholderEn: 'Describe onset, course, and character in detail',
+    },
+    {
+      key: 'pastMedicalHistory',
+      label: '과거력 (PMHx)',
+      labelEn: 'Past Medical History',
+      type: 'textarea',
+      required: false,
+      section: 'history',
+      order: 2,
+      placeholder: 'HTN, DM, 결핵, 간염 등',
+      placeholderEn: 'HTN, DM, TB, Hepatitis, etc.',
+    },
+    {
+      key: 'medications',
+      label: '복용 약물',
+      labelEn: 'Current Medications',
+      type: 'textarea',
+      required: false,
+      section: 'history',
+      order: 3,
+      placeholder: '현재 복용 중인 약물 목록',
+      placeholderEn: 'List of current medications',
+    },
+    {
+      key: 'allergies',
+      label: '알레르기',
+      labelEn: 'Allergies',
+      type: 'text',
+      required: false,
+      section: 'history',
+      order: 4,
+      placeholder: 'NKDA 또는 알레르기 약물/음식',
+      placeholderEn: 'NKDA or allergy to drugs/food',
+    },
+    {
+      key: 'familyHistory',
+      label: '가족력 (FHx)',
+      labelEn: 'Family History',
+      type: 'textarea',
+      required: false,
+      section: 'history',
+      order: 5,
+    },
+    {
+      key: 'socialHistory',
+      label: '사회력 (SHx)',
+      labelEn: 'Social History',
+      type: 'textarea',
+      required: false,
+      section: 'history',
+      order: 6,
+      placeholder: '흡연, 음주, 직업 등',
+      placeholderEn: 'Smoking, alcohol, occupation, etc.',
+    },
+
+    // Vital Signs
+    {
+      key: 'bloodPressure',
+      label: '혈압 (BP)',
+      labelEn: 'Blood Pressure',
+      type: 'text',
+      required: false,
+      section: 'vitals',
+      order: 1,
+      placeholder: '120/80 mmHg',
+      placeholderEn: '120/80 mmHg',
+    },
+    {
+      key: 'heartRate',
+      label: '맥박 (HR)',
+      labelEn: 'Heart Rate',
+      type: 'text',
+      required: false,
+      section: 'vitals',
+      order: 2,
+      placeholder: '72 bpm',
+      placeholderEn: '72 bpm',
+    },
+    {
+      key: 'respiratoryRate',
+      label: '호흡수 (RR)',
+      labelEn: 'Respiratory Rate',
+      type: 'text',
+      required: false,
+      section: 'vitals',
+      order: 3,
+      placeholder: '16 /min',
+      placeholderEn: '16 /min',
+    },
+    {
+      key: 'temperature',
+      label: '체온 (BT)',
+      labelEn: 'Body Temperature',
+      type: 'text',
+      required: false,
+      section: 'vitals',
+      order: 4,
+      placeholder: '36.5 °C',
+      placeholderEn: '36.5 °C',
+    },
+    {
+      key: 'oxygenSaturation',
+      label: '산소포화도 (SpO2)',
+      labelEn: 'Oxygen Saturation',
+      type: 'text',
+      required: false,
+      section: 'vitals',
+      order: 5,
+      placeholder: '98%',
+      placeholderEn: '98%',
+    },
+
+    // Physical Exam
+    {
+      key: 'generalAppearance',
+      label: '전신 상태',
+      labelEn: 'General Appearance',
+      type: 'text',
+      required: false,
+      section: 'physical-exam',
+      order: 1,
+      placeholder: 'Alert, oriented, no acute distress',
+      placeholderEn: 'Alert, oriented, no acute distress',
+    },
+    {
+      key: 'heent',
+      label: 'HEENT',
+      labelEn: 'Head, Eyes, Ears, Nose, Throat',
+      type: 'textarea',
+      required: false,
+      section: 'physical-exam',
+      order: 2,
+    },
+    {
+      key: 'chest',
+      label: '흉부',
+      labelEn: 'Chest/Lungs',
+      type: 'textarea',
+      required: false,
+      section: 'physical-exam',
+      order: 3,
+    },
+    {
+      key: 'heart',
+      label: '심장',
+      labelEn: 'Cardiovascular',
+      type: 'textarea',
+      required: false,
+      section: 'physical-exam',
+      order: 4,
+    },
+    {
+      key: 'abdomen',
+      label: '복부',
+      labelEn: 'Abdomen',
+      type: 'textarea',
+      required: false,
+      section: 'physical-exam',
+      order: 5,
+    },
+    {
+      key: 'extremities',
+      label: '사지',
+      labelEn: 'Extremities',
+      type: 'textarea',
+      required: false,
+      section: 'physical-exam',
+      order: 6,
+    },
+    {
+      key: 'neurological',
+      label: '신경학적 검사',
+      labelEn: 'Neurological',
+      type: 'textarea',
+      required: false,
+      section: 'physical-exam',
+      order: 7,
+    },
+
+    // Labs
+    {
+      key: 'cbcResults',
+      label: 'CBC',
+      labelEn: 'Complete Blood Count',
+      type: 'textarea',
+      required: false,
+      section: 'labs',
+      order: 1,
+      placeholder: 'WBC, Hb, Hct, PLT',
+      placeholderEn: 'WBC, Hb, Hct, PLT',
+    },
+    {
+      key: 'chemistryResults',
+      label: 'Chemistry',
+      labelEn: 'Chemistry Panel',
+      type: 'textarea',
+      required: false,
+      section: 'labs',
+      order: 2,
+      placeholder: 'BUN, Cr, AST, ALT, etc.',
+      placeholderEn: 'BUN, Cr, AST, ALT, etc.',
+    },
+    {
+      key: 'urinalysisResults',
+      label: 'U/A',
+      labelEn: 'Urinalysis',
+      type: 'textarea',
+      required: false,
+      section: 'labs',
+      order: 3,
+    },
+    {
+      key: 'imagingResults',
+      label: '영상검사',
+      labelEn: 'Imaging',
+      type: 'textarea',
+      required: false,
+      section: 'labs',
+      order: 4,
+      placeholder: 'CXR, CT, MRI 등',
+      placeholderEn: 'CXR, CT, MRI, etc.',
+    },
+    {
+      key: 'otherTests',
+      label: '기타 검사',
+      labelEn: 'Other Tests',
+      type: 'textarea',
+      required: false,
+      section: 'labs',
+      order: 5,
+    },
+
+    // Assessment & Plan
+    {
+      key: 'assessment',
+      label: '평가 (Assessment)',
+      labelEn: 'Assessment',
+      type: 'textarea',
+      required: true,
+      section: 'assessment',
+      order: 1,
+      placeholder: '진단명 및 감별진단',
+      placeholderEn: 'Diagnosis and differential diagnosis',
+    },
+    {
+      key: 'plan',
+      label: '계획 (Plan)',
+      labelEn: 'Plan',
+      type: 'textarea',
+      required: true,
+      section: 'assessment',
+      order: 2,
+      placeholder: '치료 계획, 추가 검사, 경과 관찰 등',
+      placeholderEn: 'Treatment plan, additional tests, follow-up, etc.',
+    },
+    {
+      key: 'disposition',
+      label: '처치',
+      labelEn: 'Disposition',
+      type: 'select',
+      required: false,
+      section: 'assessment',
+      order: 3,
+      options: [
+        { value: 'admission', label: '입원', labelEn: 'Admission' },
+        { value: 'discharge', label: '퇴원', labelEn: 'Discharge' },
+        { value: 'transfer', label: '전원', labelEn: 'Transfer' },
+        { value: 'outpatient', label: '외래 추적', labelEn: 'Outpatient Follow-up' },
+      ],
+    },
+  ],
+
+  aiPrompt: `당신은 내과 전문의입니다. 다음 의무기록/차트 내용을 분석하여 구조화된 JSON으로 추출해주세요.
+
+추출할 필드:
+- chiefComplaint: 주소 (C.C)
+- onsetDate: 발병일 (YYYY-MM-DD 형식)
+- hpiNarrative: 현병력 상세
+- pastMedicalHistory: 과거력
+- medications: 복용 약물
+- allergies: 알레르기
+- familyHistory: 가족력
+- socialHistory: 사회력
+- bloodPressure, heartRate, respiratoryRate, temperature, oxygenSaturation: 활력징후
+- generalAppearance, heent, chest, heart, abdomen, extremities, neurological: 신체검사
+- cbcResults, chemistryResults, urinalysisResults, imagingResults, otherTests: 검사결과
+- assessment: 진단/평가
+- plan: 치료 계획
+- disposition: 처치 (admission/discharge/transfer/outpatient 중 하나)
+
+해당 정보가 없으면 null로 설정하세요. JSON만 반환하세요.`,
+};
