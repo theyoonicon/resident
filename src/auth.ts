@@ -234,9 +234,6 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         session.user.verificationStatus = token.verificationStatus as string;
         session.user.department = token.department as string;
         session.user.year = token.year as string;
-        (session as any).hasVerificationImage = token.hasVerificationImage;
-        (session as any).emailVerified = token.emailVerified;
-        (session as any).hasPassword = token.hasPassword;
       }
       return session;
     },
