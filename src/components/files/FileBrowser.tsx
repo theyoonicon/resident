@@ -571,7 +571,7 @@ function FileBrowserContent({ scope }: FileBrowserProps) {
       .then((data) => setFolders(Array.isArray(data) ? data : []))
       .catch(() => {});
 
-    const fileParams = folderId ? `&folderId=${folderId}` : "";
+    const fileParams = folderId ? `&folderId=${folderId}` : "&folderId=";
     fetch(`/api/files?scope=${scope}${fileParams}`)
       .then((r) => r.json())
       .then((data) => setFiles(data.files || []))
