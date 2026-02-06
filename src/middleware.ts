@@ -20,6 +20,7 @@ export async function middleware(request: NextRequest) {
     token = await getToken({
       req: request,
       secret: process.env.AUTH_SECRET || process.env.NEXTAUTH_SECRET,
+      secureCookie: true,
     });
   } catch {
     return NextResponse.redirect(new URL("/login", request.url));

@@ -45,13 +45,13 @@ export async function POST(req: Request) {
 
     await sendVerificationCode(email.toLowerCase().trim(), code);
 
-    // 기존 계정(비밀번호 있는) 확인 → 마스킹된 정보 반환
+    // 기존 계정(비밀번호 있고, 아직 이메일 인증 안 한) 확인 → 마스킹된 정보 반환
     const existingUser = await prisma.user.findUnique({
       where: { email: email.toLowerCase().trim() },
-      select: { name: true, username: true, password: true },
+      select: { name: true, username: true, password: true, emailVerified: true },
     });
 
-    if (existingUser?.password) {
+    if (existingUser?.password && !existingUser.emailVerified) {
       return NextResponse.json({
         success: true,
         existingAccount: {
