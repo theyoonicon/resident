@@ -492,13 +492,13 @@ function FileBrowserContent({ scope }: FileBrowserProps) {
     return arr;
   }, [files, sortBy]);
 
-  // allItems: 선택 영역용 (폴더 먼저, 파일 나중)
+  // allItems: 선택 영역용 (정렬된 순서 — 폴더 먼저, 파일 나중)
   const allItems: SelectedItem[] = useMemo(
     () => [
-      ...folders.map((f) => ({ id: f.id, type: "folder" as const })),
-      ...files.map((f) => ({ id: f.id, type: "file" as const })),
+      ...sortedFolders.map((f) => ({ id: f.id, type: "folder" as const })),
+      ...sortedFiles.map((f) => ({ id: f.id, type: "file" as const })),
     ],
-    [folders, files]
+    [sortedFolders, sortedFiles]
   );
 
   // 파일 크기 맵 (DetailPanel용)
