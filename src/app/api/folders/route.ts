@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 export async function GET(request: NextRequest) {
   try {
@@ -33,6 +34,35 @@ export async function GET(request: NextRequest) {
       },
       orderBy: { name: "asc" },
     });
+
+    // 하위 폴더의 파일까지 재귀적으로 카운트
+    if (folders.length > 0) {
+      const folderIds = folders.map((f) => f.id);
+      const counts = await prisma.$queryRaw<
+        { root_id: string; file_count: bigint }[]
+      >`
+        WITH RECURSIVE descendant_folders AS (
+          SELECT id, id as root_id FROM "Folder"
+          WHERE id IN (${Prisma.join(folderIds)}) AND "deletedAt" IS NULL
+          UNION ALL
+          SELECT f.id, d.root_id FROM "Folder" f
+          INNER JOIN descendant_folders d ON f."parentId" = d.id
+          WHERE f."deletedAt" IS NULL
+        )
+        SELECT d.root_id, COUNT(fi.id)::bigint as file_count
+        FROM descendant_folders d
+        LEFT JOIN "File" fi ON fi."folderId" = d.id AND fi."deletedAt" IS NULL
+        GROUP BY d.root_id
+      `;
+
+      const countMap = new Map(
+        counts.map((c) => [c.root_id, Number(c.file_count)])
+      );
+
+      for (const folder of folders) {
+        folder._count.files = countMap.get(folder.id) ?? 0;
+      }
+    }
 
     return NextResponse.json(folders);
   } catch (error) {

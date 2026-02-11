@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@prisma/client";
 
 export async function GET(
   _request: NextRequest,
@@ -22,6 +23,26 @@ export async function GET(
         _count: { select: { files: true, children: true } },
       },
     });
+
+    // 하위 폴더의 파일까지 재귀적으로 카운트
+    if (folder) {
+      const counts = await prisma.$queryRaw<
+        { file_count: bigint }[]
+      >`
+        WITH RECURSIVE descendant_folders AS (
+          SELECT id FROM "Folder"
+          WHERE id = ${id} AND "deletedAt" IS NULL
+          UNION ALL
+          SELECT f.id FROM "Folder" f
+          INNER JOIN descendant_folders d ON f."parentId" = d.id
+          WHERE f."deletedAt" IS NULL
+        )
+        SELECT COUNT(fi.id)::bigint as file_count
+        FROM descendant_folders d
+        LEFT JOIN "File" fi ON fi."folderId" = d.id AND fi."deletedAt" IS NULL
+      `;
+      folder._count.files = Number(counts[0]?.file_count ?? 0);
+    }
 
     // 현재 폴더부터 루트까지의 경로(breadcrumb) 조회
     const breadcrumbs: { id: string; name: string }[] = [];
